@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"os"
 	"regexp"
+	"sort"
 	"strconv"
 )
 
@@ -58,11 +59,17 @@ func printit() {
 	if err != nil {
 		fatal(err)
 	}
+	kk := make([]string, 0, len(M))
+	for k := range M {
+		kk = append(kk, k)
+	}
+	sort.Strings(kk)
 	fmt.Fprintln(f, `package lu
 
 var M = map[string]string{`)
-	for t, j := range M {
-		fmt.Fprintf(f, "	%s: %s,\n", strconv.Quote(t), strconv.Quote(j))
+	for _, k := range kk {
+		v := M[k]
+		fmt.Fprintf(f, "	%s: %s,\n", strconv.Quote(k), strconv.Quote(v))
 	}
 	fmt.Fprintln(f, `}`)
 }
@@ -70,6 +77,7 @@ var M = map[string]string{`)
 func main() {
 	parseFile("cccanto-webdist.txt")
 	parseFile("cccedict-canto-readings-150923.txt")
+	parseFile("extras.txt")
 	printit()
 }
 
