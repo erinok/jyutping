@@ -9,9 +9,12 @@ import (
 	"github.com/erinok/jyutping/lu"
 )
 
-func convert(s string) {
+func convert(s string, sp bool) {
 	if s == "" {
 		return
+	}
+	if sp { 
+		fmt.Print(" ")
 	}
 	t := ""
 	j := 0
@@ -32,19 +35,17 @@ func convert(s string) {
 	}
 	if t != "" {
 		fmt.Print(t)
-		fmt.Print(" ")
-		convert(s[j:])
+		convert(s[j:], true)
 	} else {
 		fmt.Print(s[:i])
-		fmt.Print(" ")
-		convert(s[i:])
+		convert(s[i:], true)
 	}
 }
 
 func main() {
 	scanner := bufio.NewScanner(os.Stdin)
 	for scanner.Scan() {
-		convert(scanner.Text())
+		convert(scanner.Text(), false)
 	}
 	fmt.Println()
 }
