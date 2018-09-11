@@ -50,6 +50,7 @@ func Convert(s string) string {
 	t := w.String()
 	for fr, to := range map[string]string{
 		`“ `:  `"`,
+		`“`:  `"`,
 		"”":   `"`,
 		":  ": ": ",
 	} {

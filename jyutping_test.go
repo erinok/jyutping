@@ -40,11 +40,27 @@ func ExampleConvert5() {
 	// zi6 mok6 faan1 jik6: lei5 zi2 cin1
 }
 
-
 func ExampleConvert6() {
 	p("《梅花》的背景是1970年代的")
 	// Output:
 	// "mui4 faa1" dik1 bui3 ging2 si6 1970 nin4 doi6 dik1
 }
 
+func ExampleConvert7() {
+	p("《權力遊戲》、《紙牌屋》")
+	// Output:
+	// "kyun4 lik6 jau4 hei3", "zi2 paai2 uk1"
+}
+
+func ExampleConvert8() {
+	p("“Owl Likes”")
+	// Output:
+	// "Owl Likes"
+}
+
+func ExampleConvert9() {
+	p("“啤酒為什麼會不好喝？因為雪藏得不夠冷”")
+	// Output:
+	// "be1 zau2 wai6 sam6 mo1 wui2 bat1 hou2 hot3? jan1 wai6 syut3 cong4 dak1 bat1 gau3 laang5"
 	
+}
