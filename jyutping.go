@@ -3,6 +3,8 @@ package jyutping
 
 import (
 	"strings"
+	"unicode"
+	"unicode/utf8"
 
 	"github.com/erinok/jyutping/lu"
 )
@@ -10,7 +12,7 @@ import (
 // Convert replaces chinese characters in s with jyutping.
 func Convert(s string) string {
 	w := strings.Builder{}
-	sp := false
+	didtrans := false
 	for s != "" {
 		t := ""
 		j := 0
@@ -30,16 +32,33 @@ func Convert(s string) string {
 			i++
 		}
 		if t != "" {
-			if sp {
+			if w.Len() > 0 && wantsSpace(t) {
 				w.WriteByte(' ')
 			}
 			w.WriteString(t)
+			didtrans = true
 			s = s[j:]
 		} else {
+			if didtrans && wantsSpace(s) {
+				w.WriteByte(' ')
+			}
 			w.WriteString(s[:i])
+			didtrans = false
 			s = s[i:]
 		}
-		sp = true
 	}
-	return w.String()
+	t := w.String()
+	for fr, to := range map[string]string{
+		`“ `:  `"`,
+		"”":   `"`,
+		":  ": ": ",
+	} {
+		t = strings.Replace(t, fr, to, -1)
+	}
+	return t
+}
+
+func wantsSpace(s string) bool {
+	r, _ := utf8.DecodeRuneInString(s)
+	return unicode.IsLetter(r) || unicode.IsNumber(r) || r == '“'
 }
