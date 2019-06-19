@@ -64,3 +64,9 @@ func ExampleConvert9() {
 	// "be1 zau2 wai6 sam6 mo1 wui2 bat1 hou2 hot3? jan1 wai6 syut3 cong4 dak1 bat1 gau3 laang5"
 	
 }
+
+func ExampleColorize() {
+	fmt.Println(colorize("jat1 go3 jyut6"))
+	// Output:
+	// <span class="tone1">jat</span> <span class="tone3">go</span> <span class="tone6">jyut</span>
+}
