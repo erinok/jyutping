@@ -65,8 +65,30 @@ func ExampleConvert9() {
 	
 }
 
-func ExampleColorize() {
-	fmt.Println(colorize("jat1 go3 jyut6"))
+func cc(s string) {
+	fmt.Println(ColorizeChars(s))
+}
+
+func ExampleColorizeChars1() {
+	cc("啤酒")
+	// Output:
+	// <span class="tone1">啤</span><span class="tone2">酒</span>
+}
+
+func ExampleColorizeChars2() {
+	cc("啤酒為hi得")
+	// Output:
+	// <span class="tone1">啤</span><span class="tone2">酒</span><span class="tone6">為</span>hi<span class="tone1">得</span>
+}
+
+func ExampleColorizeChars3() {
+	cc("《權力遊戲》、《紙牌屋》")
+	// Output:
+	// 《<span class="tone4">權</span><span class="tone6">力</span><span class="tone4">遊</span><span class="tone3">戲</span>》、《<span class="tone2">紙</span><span class="tone2">牌</span><span class="tone1">屋</span>》
+}
+
+func ExampleColorizeJP() {
+	fmt.Println(colorizeJP("jat1 go3 jyut6"))
 	// Output:
 	// <span class="tone1">jat</span> <span class="tone3">go</span> <span class="tone6">jyut</span>
 }

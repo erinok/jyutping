@@ -86,7 +86,7 @@ func ConvertRuby(s string) string {
 		if t != "" {
 			w.WriteString(s[:j])
 			w.WriteRune('[')
-			w.WriteString(colorize(sanitizeForHtml(t)))
+			w.WriteString(colorizeJP(sanitizeForHtml(t)))
 			w.WriteRune(']')
 			s = s[j:]
 		} else {
@@ -106,8 +106,47 @@ func ConvertRuby(s string) string {
 	return t
 }
 
+// ColorizeChars wraps chinese characters in <span class="toneX">, per the tones.
+func ColorizeChars(s string) string {
+	w := strings.Builder{}
+	for s != "" {
+		t := ""
+		j := 0
+		i := 1
+		for {
+			t_, prefix := lu.M[s[:i]]
+			if !prefix {
+				break
+			}
+			if t_ != "" {
+				t = t_
+				j = i
+			}
+			if i == len(s) {
+				break
+			}
+			i++
+		}
+		if t != "" {
+			d := strings.Fields(t)
+			c := strings.Split(s[:j], "")
+			if len(d) > len(c) {
+				panic(fmt.Sprintln("programmer error", d, c))
+			} 
+			for i := range d {
+				w.WriteString(colorize2(c[i], d[i]))
+			}
+			s = s[j:]
+		} else {
+			w.WriteString(s[:i])
+			s = s[i:]
+		}
+	}
+	return w.String()
+}
+
 // jat1 go3 jyut6 => <span class="tone1">jat</span> <span class="tone3">go</span> <span class="tone6">jyut</span>
-func colorize(s string) string {
+func colorizeJP(s string) string {
 	ff := strings.Fields(s)
 	for i := range ff {
 		ff[i] = colorize1(ff[i])
@@ -120,6 +159,16 @@ func colorize1(s string) string {
 	b := strings.Trim(s, "123456")
 	n := s[len(b):]
 	return fmt.Sprintf(`<span class="tone%s">%s</span>`, n, b)
+}
+
+// wrap s in colors per the suffix on jp
+func colorize2(s, jp string) string {
+	b := strings.Trim(jp, "123456")
+	n := jp[len(b):]
+	if n == "" {
+		return s
+	}
+	return fmt.Sprintf(`<span class="tone%s">%s</span>`, n, s)
 }
 
 func sanitizeForHtml(s string) string {
