@@ -101,3 +101,10 @@ func ExampleConvertRuby1() {
 	// hi
 }
 	
+
+func ExampleConvertRuby2() {
+	// TODO: why is \260 appearing in the output
+	pr("牠到")
+	// Output:
+	// ho
+}

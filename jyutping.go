@@ -65,10 +65,11 @@ func Convert(s string) string {
 // Also normalizes quote types.
 func ConvertRuby(s string) string {
 	lines := strings.Split(s, "\n")
-	for i, l := range(lines) {
-		lines[i] = convertRubyLine(l)
+	var ruby []string
+	for _, l := range(lines) {
+		ruby = append(ruby, convertRubyLine(l))
 	}
-	return strings.Join(lines, "<br/>")
+	return strings.Join(ruby, "<br/>")
 }
 
 // <center><table>
@@ -200,7 +201,7 @@ func colorizeJP(s string) string {
 func colorizeJP1(s string) string {
 	b := strings.Trim(s, "123456")
 	n := s[len(b):]
-	return fmt.Sprintf(`<span class="tone%s">%s</span>`, n, b)
+	return fmt.Sprintf(`<span class="tone%s">%s</span>`, n, s)
 }
 
 // wrap s in colors per the suffix on jp
