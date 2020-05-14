@@ -92,3 +92,12 @@ func ExampleColorizeJP() {
 	// Output:
 	// <span class="tone1">jat</span> <span class="tone3">go</span> <span class="tone6">jyut</span>
 }
+
+func pr(s string) { fmt.Println(ConvertRuby(s)) }
+
+func ExampleConvertRuby1() {
+	pr("轉職吧")
+	// Output:
+	// hi
+}
+	

@@ -60,11 +60,30 @@ func Convert(s string) string {
 	return t
 }
 
-// ConvertRuby annotates chinese characters w/ color jyutping ruby (in the format used by github.com/luoliyan/chinese-support-redux anki plugin).
-//
-// Result is html.
+// ConvertRuby annotates chinese characters w/ color jyutping ruby (in an html table format).
+// 
+// Also normalizes quote types.
 func ConvertRuby(s string) string {
-	w := strings.Builder{}
+	lines := strings.Split(s, "\n")
+	for i, l := range(lines) {
+		lines[i] = convertRubyLine(l)
+	}
+	return strings.Join(lines, "<br/>")
+}
+
+// <center><table>
+// <tbody>
+// <tr>
+// <td><center><font size=+4>轉</font></center></td><td><center><font size=+4>職</font></center></td><td><center><font size=+4>吧</font></center></td>
+// </tr><tr>
+// <td><center>zyun2</center></td><td><center>zik1</center></td><td><center>baa6</center></td>
+// </tr>
+// </tbody></table>
+// </center>
+func convertRubyLine(s string) string {
+	// TODO: need to collect characters in one list, ruby in another, and then join them into two table rows
+	var txt []string
+	var ruby []string
 	for s != "" {
 		t := ""
 		j := 0
@@ -84,16 +103,39 @@ func ConvertRuby(s string) string {
 			i++
 		}
 		if t != "" {
-			w.WriteString(s[:j])
-			w.WriteRune('[')
-			w.WriteString(colorizeJP(sanitizeForHtml(t)))
-			w.WriteRune(']')
+			d := strings.Fields(t)
+			c := strings.Split(s[:j], "")
+			if len(d) > len(c) {
+				panic(fmt.Sprintln("programmer error", d, c))
+			} 
+			for i := range d {
+				txt = append(txt, colorizeChar(c[i], d[i]))
+				ruby = append(ruby, colorizeJP1(sanitizeForHtml(d[i])))
+			}
 			s = s[j:]
 		} else {
-			w.WriteString(s[:i])
+			txt = append(txt, sanitizeForHtml(s[:i]))
+			ruby = append(ruby, "")
 			s = s[i:]
 		}
 	}
+	w := strings.Builder{}
+	w.WriteString("<center><table><tbody>")
+	w.WriteString("<tr>")
+	for _, s := range txt {
+		w.WriteString("<td><center><font size=+4>")
+		w.WriteString(s)
+		w.WriteString("</font></center></td>")
+	}
+	w.WriteString("</tr>")
+	w.WriteString("<tr>")
+	for _, s := range ruby {
+		w.WriteString("<td><center>")
+		w.WriteString(s)
+		w.WriteString("</center></td>")
+	}
+	w.WriteString("</tr>")
+	w.WriteString("</tbody></table></center>")
 	t := w.String()
 	for fr, to := range map[string]string{
 		`“ `:  `"`,
@@ -134,7 +176,7 @@ func ColorizeChars(s string) string {
 				panic(fmt.Sprintln("programmer error", d, c))
 			} 
 			for i := range d {
-				w.WriteString(colorize2(c[i], d[i]))
+				w.WriteString(colorizeChar(c[i], d[i]))
 			}
 			s = s[j:]
 		} else {
@@ -149,20 +191,20 @@ func ColorizeChars(s string) string {
 func colorizeJP(s string) string {
 	ff := strings.Fields(s)
 	for i := range ff {
-		ff[i] = colorize1(ff[i])
+		ff[i] = colorizeJP1(ff[i])
 	}
 	return strings.Join(ff, " ")
 }
 
 // jat1 => <span class="tone1">jat</span>
-func colorize1(s string) string {
+func colorizeJP1(s string) string {
 	b := strings.Trim(s, "123456")
 	n := s[len(b):]
 	return fmt.Sprintf(`<span class="tone%s">%s</span>`, n, b)
 }
 
 // wrap s in colors per the suffix on jp
-func colorize2(s, jp string) string {
+func colorizeChar(s, jp string) string {
 	b := strings.Trim(jp, "123456")
 	n := jp[len(b):]
 	if n == "" {
