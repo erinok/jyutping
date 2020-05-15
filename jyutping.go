@@ -82,7 +82,6 @@ func ConvertRuby(s string) string {
 // </tbody></table>
 // </center>
 func convertRubyLine(s string) string {
-	// TODO: need to collect characters in one list, ruby in another, and then join them into two table rows
 	var txt []string
 	var ruby []string
 	for s != "" {
@@ -113,12 +112,18 @@ func convertRubyLine(s string) string {
 				txt = append(txt, colorizeChar(c[i], d[i]))
 				ruby = append(ruby, colorizeJP1(sanitizeForHtml(d[i])))
 			}
+			txt = append(txt, "")
+			ruby = append(ruby, "|")
 			s = s[j:]
 		} else {
 			txt = append(txt, sanitizeForHtml(s[:i]))
 			ruby = append(ruby, "")
 			s = s[i:]
 		}
+	}
+	if n := len(txt) - 1; n > 0 && ruby[n] == "|" {
+		txt = txt[:n]
+		ruby = ruby[:n]
 	}
 	w := strings.Builder{}
 	w.WriteString("<center><table><tbody>")
