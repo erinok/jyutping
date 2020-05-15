@@ -100,7 +100,6 @@ func ExampleConvertRuby1() {
 	// Output:
 	// hi
 }
-	
 
 func ExampleConvertRuby2() {
 	// TODO: why is \260 appearing in the output

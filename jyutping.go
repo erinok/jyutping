@@ -61,12 +61,12 @@ func Convert(s string) string {
 }
 
 // ConvertRuby annotates chinese characters w/ color jyutping ruby (in an html table format).
-// 
+//
 // Also normalizes quote types.
 func ConvertRuby(s string) string {
 	lines := strings.Split(s, "\n")
 	var ruby []string
-	for _, l := range(lines) {
+	for _, l := range lines {
 		ruby = append(ruby, convertRubyLine(l))
 	}
 	return strings.Join(ruby, "<br/>")
@@ -91,7 +91,7 @@ func convertRubyLine(s string) string {
 		i := 1
 		for {
 			t_, prefix := lu.M[s[:i]]
-			if !prefix {
+			if !prefix && (i == len(s) || (s[i] & (1 << 7) == 0)) {
 				break
 			}
 			if t_ != "" {
@@ -104,11 +104,11 @@ func convertRubyLine(s string) string {
 			i++
 		}
 		if t != "" {
-			d := strings.Fields(t)
 			c := strings.Split(s[:j], "")
+			d := strings.Fields(t)
 			if len(d) > len(c) {
 				panic(fmt.Sprintln("programmer error", d, c))
-			} 
+			}
 			for i := range d {
 				txt = append(txt, colorizeChar(c[i], d[i]))
 				ruby = append(ruby, colorizeJP1(sanitizeForHtml(d[i])))
@@ -175,7 +175,7 @@ func ColorizeChars(s string) string {
 			c := strings.Split(s[:j], "")
 			if len(d) > len(c) {
 				panic(fmt.Sprintln("programmer error", d, c))
-			} 
+			}
 			for i := range d {
 				w.WriteString(colorizeChar(c[i], d[i]))
 			}
